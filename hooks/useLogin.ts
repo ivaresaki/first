@@ -33,6 +33,9 @@ export function useLogin(auth: Auth): UseLoginReturn {
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) {
+      // Reading localStorage on mount is SSR-safe only inside useEffect.
+      // The setState here is intentional — not a cascading-render risk.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFields(prev => ({ ...prev, email: saved, rememberMe: true }))
     }
   }, [])
