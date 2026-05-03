@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# first — Next.js 16 + Firebase Auth
 
-## Getting Started
+[![CI](https://github.com/ivaresaki/first/actions/workflows/ci.yml/badge.svg)](https://github.com/ivaresaki/first/actions/workflows/ci.yml)
+[![Integration Tests](https://github.com/ivaresaki/first/actions/workflows/integration.yml/badge.svg)](https://github.com/ivaresaki/first/actions/workflows/integration.yml)
 
-First, run the development server:
+A [Next.js 16](https://nextjs.org) learning project with Firebase Authentication, Tailwind CSS v4, and a full Vitest test suite.
+
+## Features
+
+- `/login` — email/password login with Firebase Auth, remember me, and password visibility toggle
+- Vitest unit, hook, and component tests
+- Firebase Auth emulator for integration tests
+
+## Getting started
+
+Copy the environment file and fill in your Firebase project values:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+cp .env.local.example .env.local   # then edit with your Firebase config
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000/login](http://localhost:3000/login).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start dev server (Turbopack) |
+| `pnpm build` | Production build |
+| `pnpm lint` | Run ESLint |
+| `pnpm test:run` | Run unit/hook/component tests (44 tests) |
+| `pnpm test` | Run tests in watch mode |
+| `pnpm test:integration` | Run Firebase emulator integration tests |
 
-## Learn More
+## Integration tests
 
-To learn more about Next.js, take a look at the following resources:
+Requires the [Firebase CLI](https://firebase.google.com/docs/cli) and Java 17+.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+firebase emulators:start --only auth   # in one terminal
+pnpm test:integration                  # in another
+```
