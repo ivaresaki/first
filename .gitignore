@@ -42,3 +42,5 @@ next-env.d.ts
 
 .claude
 .firebase-debug.log
+
+graphify-out
