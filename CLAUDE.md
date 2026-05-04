@@ -7,22 +7,47 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-pnpm dev        # start dev server (Turbopack, http://localhost:3000)
-pnpm build      # production build (Turbopack)
-pnpm start      # start production server
-pnpm lint       # run ESLint directly (not `next lint` — that was removed in v16)
+pnpm dev             # start dev server (Turbopack, http://localhost:3000)
+pnpm build           # production build (Turbopack)
+pnpm start           # start production server
+pnpm lint            # run ESLint directly (not `next lint` — that was removed in v16)
+pnpm test            # unit/component tests in watch mode (jsdom)
+pnpm test:run        # unit/component tests, one-shot (used in CI)
+pnpm test:integration  # Firebase Auth emulator tests (requires emulator — see below)
 ```
 
-No test runner is configured yet.
+Run a single test file:
+```bash
+pnpm test path/to/file.test.tsx
+```
+
+Integration tests need the Firebase Auth emulator running. The easiest way is via `firebase-tools`:
+```bash
+npx firebase-tools emulators:exec --only auth --project nextjs-firebase-app-1ff04 "pnpm test:integration"
+```
 
 ## Architecture
 
-This is a **Next.js 16** App Router project with React 19.2 and Tailwind CSS v4.
+This is a **Next.js 16** App Router project with React 19.2, Tailwind CSS v4, and Firebase Authentication.
 
 - `app/layout.tsx` — root layout: loads Geist fonts, sets `<html>` and `<body>` classes
 - `app/page.tsx` — home page (Server Component by default)
 - `app/globals.css` — global styles (Tailwind entry point)
 - `@/*` path alias resolves to the repo root
+
+### Feature layer pattern
+
+Features are split into three layers (the login feature is the canonical example):
+
+- `lib/` — pure functions with no React or Firebase state: validation (`lib/validation.ts`), error-code mapping (`lib/authErrors.ts`)
+- `hooks/` — `'use client'` hooks that own state and call Firebase: `hooks/useLogin.ts` receives an `Auth` instance as a parameter so it can be tested with a mock/emulator auth object
+- `components/` — rendering only; imports the hook and lib, no business logic
+
+### Firebase
+
+`lib/firebase.ts` exports a singleton `auth` instance. It conditionally connects to the local Auth emulator when `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true` (set in `.env.test`). Production uses the real Firebase project.
+
+Integration tests in `__integration__/` initialize a *separate* named Firebase app (`'integration-test'`) to avoid conflicting with the `lib/firebase.ts` singleton. They run in a Node environment (`vitest.integration.config.mts`) while unit/component tests run in jsdom (`vitest.config.ts`).
 
 ## Next.js 16 Breaking Changes to Know
 

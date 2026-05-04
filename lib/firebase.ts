@@ -11,9 +11,11 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
+// getApps() guard prevents duplicate initialization during HMR module re-evaluation.
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
 export const auth = getAuth(app)
 
+// Module-level flag because connectAuthEmulator throws if called twice on the same auth instance.
 let emulatorConnected = false
 if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true' && !emulatorConnected) {
   connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true })

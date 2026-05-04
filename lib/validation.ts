@@ -17,6 +17,7 @@ export function validatePassword(value: string): string {
     { test: /[0-9]/, message: 'At least 1 digit.' },
     { test: /[^A-Za-z0-9]/, message: 'At least 1 special character.' },
   ]
+  // Returns the first failing rule only — one error shown at a time by design.
   for (const rule of rules) {
     if (!rule.test.test(value)) return rule.message
   }

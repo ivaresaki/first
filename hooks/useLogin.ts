@@ -16,6 +16,7 @@ import type { FormFields, FormErrors, UseLoginReturn } from '@/types/login'
 
 const STORAGE_KEY = 'login_remembered_email'
 
+// auth is injected rather than imported so tests can pass an emulator auth instance.
 export function useLogin(auth: Auth): UseLoginReturn {
   const router = useRouter()
 
@@ -47,6 +48,7 @@ export function useLogin(auth: Auth): UseLoginReturn {
     setFields(prev => ({ ...prev, [name]: newValue }))
     setAuthError('')
 
+    // Inline validation only activates after the first submit attempt to avoid nagging the user prematurely.
     if (hasSubmitted) {
       if (name === 'email') {
         setErrors(prev => ({ ...prev, email: validateEmail(value) }))

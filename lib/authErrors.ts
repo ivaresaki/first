@@ -2,6 +2,7 @@ import { FirebaseError } from 'firebase/app'
 
 export function firebaseErrorMessage(error: FirebaseError): string {
   switch (error.code) {
+    // Intentionally identical message — avoids leaking whether the email exists.
     case 'auth/invalid-credential':
     case 'auth/user-not-found':
     case 'auth/wrong-password':
